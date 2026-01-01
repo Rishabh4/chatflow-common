@@ -1,9 +1,11 @@
 package com.bhaava.chatflow.common.core.exception;
 
 import com.bhaava.chatflow.common.core.enums.ErrorCode;
+import lombok.Getter;
 
 import java.util.Map;
 
+@Getter
 public abstract class BaseException extends RuntimeException {
 
     private final ErrorCode errorCode;
@@ -15,7 +17,4 @@ public abstract class BaseException extends RuntimeException {
         this.errorCode = errorCode;
         this.metadata = metadata;
     }
-
-    public ErrorCode getErrorCode() { return errorCode; }
-    public Map<String, Object> getMetadata() { return metadata; }
 }

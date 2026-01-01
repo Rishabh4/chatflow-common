@@ -1,6 +1,7 @@
 package com.bhaava.chatflow.common.messaging.annotation;
 
-import com.bhaava.chatflow.common.messaging.config.ChatFlowSecurityConfig;
+import com.bhaava.chatflow.common.messaging.config.KafkaConsumerConfig;
+import com.bhaava.chatflow.common.messaging.config.KafkaProducerConfig;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.ElementType;
@@ -10,6 +11,6 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@Import(ChatFlowSecurityConfig.class)
+@Import({KafkaProducerConfig.class, KafkaConsumerConfig.class})
 public @interface EnableKafkaMessaging {
 }

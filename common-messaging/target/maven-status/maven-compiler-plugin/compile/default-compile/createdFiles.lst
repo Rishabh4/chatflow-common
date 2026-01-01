@@ -1,6 +1,5 @@
 com/bhaava/chatflow/common/messaging/event/ComplaintCreatedEvent.class
 com/bhaava/chatflow/common/messaging/annotation/EnableKafkaMessaging.class
 com/bhaava/chatflow/common/messaging/config/KafkaProducerConfig.class
-com/bhaava/chatflow/common/messaging/config/ChatFlowSecurityConfig.class
 com/bhaava/chatflow/common/messaging/config/KafkaConsumerConfig.class
 com/bhaava/chatflow/common/messaging/constants/KafkaTopics.class

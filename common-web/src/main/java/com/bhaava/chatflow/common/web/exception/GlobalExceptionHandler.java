@@ -3,6 +3,7 @@ package com.bhaava.chatflow.common.web.exception;
 import com.bhaava.chatflow.common.core.enums.ErrorCode;
 import com.bhaava.chatflow.common.core.exception.BaseException;
 import com.bhaava.chatflow.common.core.response.ApiError;
+import com.bhaava.chatflow.common.logging.mdc.MDCKeys;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.http.HttpStatus;
@@ -20,8 +21,6 @@ import java.util.stream.Collectors;
 @Slf4j
 public class GlobalExceptionHandler {
 
-    public static final String CORRELATION_ID = "correlationId";
-
     @ExceptionHandler(BaseException.class)
     public ResponseEntity<ApiError> handleBaseException(BaseException ex) {
 
@@ -34,11 +33,17 @@ public class GlobalExceptionHandler {
         ApiError error = ApiError.builder()
                 .errorCode(ex.getErrorCode().name())
                 .message(ex.getMessage())
-                .correlationId(MDC.get(CORRELATION_ID))
+                .correlationId(MDC.get(MDCKeys.CORRELATION_ID))
                 .timestamp(Instant.now())
                 .build();
 
-        return ResponseEntity.badRequest().body(error);
+        return switch (ex.getErrorCode()) {
+            case RESOURCE_NOT_FOUND -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+            case DUPLICATE_RESOURCE -> ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+            case UNAUTHORIZED -> ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
+            case FORBIDDEN -> ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
+            default -> ResponseEntity.badRequest().body(error);
+        };
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -62,7 +67,7 @@ public class GlobalExceptionHandler {
                         .errorCode(ErrorCode.INVALID_REQUEST.name())
                         .message(ex.getMessage())
                         .details(errors)
-                        .correlationId(MDC.get(CORRELATION_ID))
+                        .correlationId(MDC.get(MDCKeys.CORRELATION_ID))
                         .timestamp(Instant.now())
                         .build());
     }
@@ -78,9 +83,8 @@ public class GlobalExceptionHandler {
                 .body(ApiError.builder()
                         .errorCode(ErrorCode.INTERNAL_ERROR.name())
                         .message(ex.getMessage())
-                        .correlationId(MDC.get(CORRELATION_ID))
+                        .correlationId(MDC.get(MDCKeys.CORRELATION_ID))
                         .timestamp(Instant.now())
                         .build());
     }
 }
-
